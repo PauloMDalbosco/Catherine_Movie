@@ -1,0 +1,308 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/Table1.css" rel="stylesheet" />
+<script src="~/Scripts/bootbox.min.js"></script>
+<h4>Filmes</h4>
+
+<br />
+
+<div class="row" id="Search" hidden="hidden">
+
+    <h5>Pesquisa</h5>
+    <div class="col-md-6">
+        <p>
+            @Html.TextBox("SearchMovie", string.Empty, string.Empty, new { @class = "form-control", @id = "SearchMovie", @placeholder = "Filme" })
+        </p>
+    </div>
+</div>
+
+<div class="row" id="addMovi" hidden="hidden">
+
+    <h5>Cadastro</h5>
+    <div class="col-md-4">
+        <p>
+            @Html.TextBox("Movie", string.Empty, string.Empty, new { @class = "form-control", @id = "Movie", @placeholder = "Filme" })
+        </p>
+    </div>
+
+    <div class="col-md-4">
+        <p>
+            @Html.DropDownList("Genre", (SelectList)ViewBag.dropGenre, new { @class = "form-control", @id = "Genre" })
+
+            <button type="button" class="btn btn-xs" aria-label="Left Align" id="newGenre">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+        </p>
+    </div>
+
+    <div class="col-md-1">
+        <p>
+            <button type="button" class="btn btn-xs" aria-label="Left Align" id="btnSaveMovie" style="float:left;">
+                <span class="glyphicon glyphicon-save-file" style="font-size:18px" aria-hidden="true"></span>
+            </button>
+        </p>
+    </div>
+
+</div>
+
+<div>
+    <button type="button" class="btn btn-xs" aria-label="Left Align" id="btnNewMovie">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    </button>
+
+    <button type="button" class="btn btn-xs" aria-label="Left Align" id="btnSearch">
+        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    </button>
+</div>
+<br />
+
+@*modal de adição de gênero*@
+<div class="modal fade" id="modalGenre">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Adicionar novo gênero</h4>
+            </div>
+            <div class="modal-body">
+
+                @Html.TextBox("NewGenre", string.Empty, string.Empty, new { @class = "form-control", @id = "NewGenre", @placeholder = "Gênero" })
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-xs" aria-label="Left Align" id="btnSaveGenre" style="float:left;">
+                    <span class="glyphicon glyphicon-save-file" style="font-size:18px" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*modal de edição de filme*@
+<div class="modal fade" id="modalAddMovie">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Adicionar novo gênero</h4>
+            </div>
+            <div class="modal-body">
+
+                @Html.TextBox("EditMovie", string.Empty, string.Empty, new { @class = "form-control", @id = "EditMovie", @placeholder = "Filme" })
+                @Html.Hidden("idMovie")
+                <br />
+
+                @Html.DropDownList("GenreEdit", (SelectList)ViewBag.dropGenre, new { @class = "form-control", @id = "Genre" })
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-xs" aria-label="Left Align" id="btnEditMovie" style="float:left;">
+                    <span class="glyphicon glyphicon-save-file" style="font-size:18px" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-xs" aria-label="Right Align" id="btnDelMovies" style="float:right;">
+    <span>Deletar Filme(s)</span>
+</button>
+<div id="partial">
+    @Html.Partial("../Movie/Grid")
+</div>
+
+<script>
+
+    //cadastra novo gênero
+     $("#btnSaveGenre").click(function () {
+
+         var genre = $("#NewGenre").val();
+         $.ajax({
+            url: newGenre,
+            type: 'POST',
+            data: { Genre: genre },
+            datatype: 'json',
+            success: function (data) {
+                $("#Genre").empty();
+                $.each(data, function (i, item) {
+                        $("#Genre").append('<option value="' + item.Value + '">' +
+                            item.Text + '</option>');
+                });
+
+                $("#NewGenre").val("");
+                $('#modalGenre').modal('toggle');
+             },
+            error: function (ex) {
+                    alertify.alert('Problemas ao persister novo gênero.');
+                }
+        });
+
+     });
+
+    var newGenre = "@Url.Action("NewGenre", "Movie")";
+
+    $("#btnSearch").click(function () {
+
+        $("#addMovi").hide();
+        $("#Search").toggle();
+    });
+
+    $("#btnNewMovie").click(function () {
+
+        $("#Search").hide();
+        $("#addMovi").toggle();
+    });
+
+    $("#SearchMovie").keyup(function () {
+
+        Search();
+    });
+
+     $("#btnSaveMovie").click(function () {
+
+        Save();
+     });
+
+    //edita filme
+     $("#btnEditMovie").click(function () {
+
+         var name = $("#EditMovie").val();
+         var id = $("#idMovie").val();
+
+         if (name == "") {
+             alert('O nome do filme não pode ser vazio');
+             return;
+         }
+
+        $.post("../Movie/Grid", { Name: name, Type: "Edit", Genre: "", Id: id}).done(function (retorno) {
+            $("#partial").html(retorno);
+        });
+
+         $('#modalAddMovie').modal('toggle');
+    });
+
+    //abre modal de adição de gênero
+    $("#newGenre").click(function () {
+
+        $("#modalGenre").modal();
+
+    });
+
+    //abre modal de edição de filme
+    function modalAddMovie(id) {
+
+        $.ajax({
+            url: urlGetModifyMovies,
+            type: 'POST',
+            data: { Id: id },
+            datatype: 'json',
+            success: function (data) {
+                $.each(data, function () {
+
+                    $("#EditMovie").val(this.Name);
+
+                    $("#modalAddMovie").modal();
+
+                    $("#idMovie").val(this.Id);
+
+                })
+            },
+            error: function (ex) {
+                    alertify.alert('Problemas ao editar filme.');
+            }
+
+        });
+    }
+
+    var urlGetModifyMovies = "@Url.Action("GetMovie", "Movie")";
+
+    //deleta filmes
+     $("#btnDelMovies").click(function () {
+
+        $.post("../Movie/Grid", { Name: "", Type: "Delete", Genre: "", Id: 0}).done(function (retorno) {
+            $("#partial").html(retorno);
+        });
+
+    });
+
+    // faz a pesquisa
+    function Search() {
+        var name = $("#SearchMovie").val();
+
+        $.post("../Movie/Grid", { Name: name, Type: "Search", Genre: "", Id: 0}).done(function (retorno) {
+            $("#partial").html(retorno);
+        });
+    }
+
+     // salvar filme
+    function Save() {
+        var name = $("#Movie").val();
+        var genre = $("#Genre").val();
+
+        $.post("../Movie/Grid", { Name: name, Type: "Save", Genre: genre, Id: 0}).done(function (retorno) {
+            $("#partial").html(retorno);
+        });
+    }
+
+    // muda o status de Ativo
+    function ChangeActive(id) {
+
+        $.ajax({
+            url: urlChangeActive,
+            type: 'POST',
+            data: { Id: id },
+            datatype: 'json',
+            success: function (data) {
+                $.each(data, function () {
+
+                    if (this.Active == true) {
+
+                        $("#" + this.nome).removeClass('fas fa-thumbs-down botaoGrdiNeg')
+                        $("#" + this.nome).addClass('fas fa-thumbs-up botaoGrdi')
+
+                    }
+                    else {
+
+                        $("#" + this.nome).removeClass('fas fa-thumbs-up botaoGrdi')
+                        $("#" + this.nome).addClass('fas fa-thumbs-down botaoGrdiNeg')
+                    }
+                })
+            }
+        });
+    }
+
+    var urlChangeActive = "@Url.Action("ChangeActived", "Movie")";
+
+    // seleciona filmes a deletar
+    function ChangeDel(id) {
+
+        $.ajax({
+            url: urlChangeDeleteMovies,
+            type: 'POST',
+            data: { Id: id },
+            datatype: 'json',
+            success: function (data) {
+                $.each(data, function () {
+
+                    if (this.Del == true) {
+
+                        $("#" + this.nome + this.id).removeClass('fas fa-thumbs-down botaoGrdi')
+                        $("#" + this.nome + this.id).addClass('fas fa-thumbs-up botaoGrdiNeg')
+
+                    }
+                    else {
+
+                        $("#" + this.nome + this.id).removeClass('fas fa-thumbs-up botaoGrdiNeg')
+                        $("#" + this.nome + this.id).addClass('fas fa-thumbs-down botaoGrdi')
+                    }
+                })
+            }
+        });
+    }
+
+    var urlChangeDeleteMovies = "@Url.Action("ChangeDeleteMovies", "Movie")";
+</script>

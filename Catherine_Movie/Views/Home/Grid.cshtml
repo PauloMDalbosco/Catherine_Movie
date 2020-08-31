@@ -1,0 +1,34 @@
+﻿
+@{var grid = new WebGrid(ViewBag.Locations,
+                canPage: true, rowsPerPage: 15,
+                selectionFieldName: "selectedRow",
+                ajaxUpdateContainerId: "gridContent");
+    grid.Pager(WebGridPagerModes.NextPrevious);}
+@grid.GetHtml(
+                        htmlAttributes: new { id = "gridMovies" },
+                        tableStyle: "webGrid",
+                        headerStyle: "webgrid-header",
+                        rowStyle: "webgrid-row",
+                        footerStyle: "webgrid-footer",
+                        alternatingRowStyle: "alt",
+                        selectedRowStyle: "select",
+                        columns: grid.Columns(
+                                 grid.Column("Id", "Id", canSort: false),
+                                 grid.Column("CPF", "CPF", canSort: false),
+                                 grid.Column("LocationDate", "Data de Locação", canSort: false),
+                                 grid.Column("", "Editar", style: "campos_Nome", format: @<text>
+                                    <i class="fas fa-list botaoGrdi" onclick="modalgetMovies('@item.Id')"></i>
+                                </text>)))
+
+<style>
+
+    .botaoGrdi {
+        font-size: 20px;
+        color: #2381c5;
+        cursor: pointer;
+    }
+
+    .webgrid_Acoes {
+        text-align: right;
+    }
+</style>

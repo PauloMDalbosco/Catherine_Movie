@@ -1,0 +1,52 @@
+﻿@model DAO.Models.User
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_LayoutUserCreate.cshtml";
+}
+<br />
+<h4>Cadastro de Usuário</h4>
+
+@using (Html.BeginForm("Create", "User", FormMethod.Post, new { enctype = "multipart/form-data", id = "ajax_form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="contentObjects">
+        <div style="font-size:small">Nome</div>
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="contentObjects">
+        <div style="font-size:small">E-mail</div>
+        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="contentObjects">
+        <div style="font-size:small">Senha</div>
+        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password", required = "required" } })
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="contentObjects">
+        <div style="font-size:small">Repita sua senha</div>
+        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", type = "password", required = "required" } })
+        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+    </div>
+
+    <br />
+    <div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <button type="submit">Salvar</button>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .contentObjects {
+        margin: 3px;
+    }
+</style>

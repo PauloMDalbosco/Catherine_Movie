@@ -1,0 +1,22 @@
+﻿
+@if (ViewBag.LocationRegisters != null)
+{
+
+@{var grid = new WebGrid(ViewBag.LocationRegisters,
+                        canPage: true, rowsPerPage: 15,
+                        selectionFieldName: "selectedRow",
+                        ajaxUpdateContainerId: "gridContent");
+    grid.Pager(WebGridPagerModes.NextPrevious);}
+@grid.GetHtml(
+                                htmlAttributes: new { id = "gridMovies" },
+                                tableStyle: "webGrid",
+                                headerStyle: "webgrid-header",
+                                rowStyle: "webgrid-row",
+                                footerStyle: "webgrid-footer",
+                                alternatingRowStyle: "alt",
+                                selectedRowStyle: "select",
+                                columns: grid.Columns(
+                                         grid.Column("Id", "Id", canSort: false),
+                                         grid.Column("CPF", "CPF", canSort: false),
+                                         grid.Column("LocationDate", "Data de Locação", canSort: false)))
+ }

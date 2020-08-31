@@ -1,0 +1,145 @@
+﻿@model DAO.Models.Location
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/JqueryMask/src/jquery.mask.js"></script>
+
+
+<h5>Locação</h5>
+
+@Html.AntiForgeryToken()
+
+<input type="button" id="saveLocation" value="Salvar Locação">
+<br />
+<div class="contentObjects">
+    <div style="font-size:small">Nome</div>
+    @Html.EditorFor(model => model.CPF, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+    @Html.ValidationMessageFor(model => model.CPF, "", new { @class = "text-danger" })
+</div>
+<br />
+<div>
+    <p>
+        @Html.DropDownList("dropMovies", (SelectList)ViewBag.dropMovies, new { @class = "form-control", @id = "dropMovies" })
+    </p>
+</div>
+
+<br />
+
+<form>
+    <input type="button" class="add-row" value="Adicionar Filme">
+</form>
+<br />
+<table id="table">
+    <thead>
+        <tr> 
+            <th>Nome</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@Html.Hidden("tableHidden")
+
+@*<script src="~/Scripts/JsonTable/js/TableToJson.min.js"></script>*@
+<script>
+    var table = "";
+    $(document).ready(function () {
+        // adiciona registros na tabela
+        $(".add-row").click(function () {
+
+            var name = $("#dropMovies").val();
+            table = name + "|" + table;
+            var markup = "<tr><td>" + name + "</td></tr>";
+            $("table tbody").append(markup);
+        });
+
+        // Deleta registros da tabela
+        //$(".delete-row").click(function () {
+        //    $("table tbody").find('input[name="record"]').each(function () {
+        //        if ($(this).is(":checked")) {
+        //            $(this).parents("tr").remove();
+        //        }
+        //    });
+        //});
+    });
+
+    $('#CPF').mask('000.000.000-00', { reverse: true });
+
+    $("#saveLocation").click(function () {
+
+        var cpf = ValidateCPF();
+        if (cpf == false) {
+            alert('CPF inválido');
+        }
+
+        cpf = $('#CPF').val();
+       
+        $.ajax({
+            url: urlSavelocation,
+            type: 'POST',
+            data: { CPF: cpf, Table: table },
+            datatype: 'json',
+            success: function (data) {
+                window.location.href = "/Home/Index";
+            },
+            error: function (ex) {
+                alert('Problemas ao persister novo gênero.');
+            }
+        });
+
+    });
+
+    var urlSavelocation = "@Url.Action("NewLocation", "Location")";
+
+    //html to json
+    function html2json() {
+        var json = '{';
+        var otArr = [];
+
+        var tbl2 = $('#table tr').each(function (i) {
+            x = $(this).children();
+            var itArr = [];
+            x.each(function () {
+                itArr.push('"' + $(this).text() + '"');
+            });
+            otArr.push('"' + i + '": [' + itArr.join(',') + ']');
+        })
+        json += otArr.join(",") + '}'
+
+        return json;
+    }
+
+    //valida cpf
+    function ValidateCPF() {
+        var cpf = $('#CPF').val().replace(/[^0-9]/g, '').toString();
+
+        if (cpf.length == 11) {
+            var v = [];
+
+            //Calcula o primeiro dígito de verificação.
+            v[0] = 1 * cpf[0] + 2 * cpf[1] + 3 * cpf[2];
+            v[0] += 4 * cpf[3] + 5 * cpf[4] + 6 * cpf[5];
+            v[0] += 7 * cpf[6] + 8 * cpf[7] + 9 * cpf[8];
+            v[0] = v[0] % 11;
+            v[0] = v[0] % 10;
+
+            //Calcula o segundo dígito de verificação.
+            v[1] = 1 * cpf[1] + 2 * cpf[2] + 3 * cpf[3];
+            v[1] += 4 * cpf[4] + 5 * cpf[5] + 6 * cpf[6];
+            v[1] += 7 * cpf[7] + 8 * cpf[8] + 9 * v[0];
+            v[1] = v[1] % 11;
+            v[1] = v[1] % 10;
+
+            //Retorna Verdadeiro se os dígitos de verificação são os esperados.
+            if ((v[0] != cpf[9]) || (v[1] != cpf[10])) {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    };
+</script>

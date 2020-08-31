@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/Table1.css" rel="stylesheet" />
+
+<br />
+<h5>Locações</h5>
+
+<div>
+    <button type="button" class="btn btn-xs" aria-label="Left Align" id="btnNewLocate">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    </button>
+</div>
+
+@*modal de visualização de filmes*@
+<div class="modal fade" id="modalMovies">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Filmes Alugados</h4>
+            </div>
+            <div class="modal-body">
+
+                <table id="tableMovie">
+                  
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="partial">
+    @Html.Partial("../Home/Grid")
+</div>
+
+<script>
+    function modalgetMovies(id) {
+
+        $.ajax({
+            url: urlGetmovies,
+            type: 'POST',
+            data: { Id: id },
+            datatype: 'json',
+            success: function (data) {
+                $.each(data, function () {
+                    $("#modalMovies").modal();
+                    $("#tableMovie").empty();
+
+                    var body = "";
+                    this.list.forEach(function (item) {
+                        body = '<tr><td>' + item + '</td></tr>' + body;
+                    });
+
+                    var t = "<thead>" +
+                        "<tr>" +
+                        "<th>Filme</th>" +
+                        "</tr>" +
+                        "</thead>" +
+                        "<tbody>" +
+                           body +
+                        "</tbody>";
+
+                    $("#tableMovie").append(t);
+                })
+            },
+            error: function (ex) {
+                    alertify.alert('Problemas ao editar filme.');
+            }
+
+        });
+    }
+
+    var urlGetmovies = "@Url.Action("GetMovies", "Location")";
+
+    $("#btnNewLocate").click(function () {
+        window.location.href = "/Location/Index";
+    });
+</script>

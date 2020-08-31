@@ -1,0 +1,29 @@
+﻿.webGrid {
+    width: 100%;
+}
+
+.webgrid_Campos {
+    text-align: left;
+}
+
+.webgrid-row {
+    border-bottom: 1px solid #c1c9d1;
+    height: 40px;
+}
+
+.alt {
+    border-bottom: 1px solid #c1c9d1;
+    height: 40px;
+}
+
+.webgrid-header {
+    border-bottom: 1px solid #c1c9d1;
+}
+
+.webgrid-row:hover, .alt:hover {
+    background-color: #eff4ff;
+}
+
+.webgrid_Acoes {
+    text-align: right;
+}

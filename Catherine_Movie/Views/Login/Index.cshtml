@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gerenciador</title>
+
+    @*Jquery*@
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+    <!-- Bootstrap -->
+    @*<script src="~/Scripts/bootstrap.min.js"></script>*@
+
+    <!-- Custom Theme Style -->
+    <link href="~/Content/custom.css" rel="stylesheet" />
+</head>
+<body class="login" style="height:800px">
+
+    <div>
+      
+        <div class="login_wrapper">
+
+            <div class="animate form login_form">
+
+                <section class="login_content">
+                    <img src="/Content/Images/logo.jpg" width="110%" />
+                    @using (Html.BeginForm("Index", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        if (ViewBag.errlogin != null)
+                        {
+
+                            <label for="err" class="text-danger">@ViewBag.errlogin</label>
+                        }
+
+                        if (ViewData["mensagem"] != null)
+                        {
+
+                            <label for="err" class="text-danger">@ViewData["mensagem"]</label>
+                        }
+                        <p class="reset_pass">Entre com suas credenciais ou clique <a class="reset_pass" href="#" id="createUser">AQUI</a> para se cadastrar</p>
+                        <div>
+                            @Html.TextBox("Email", "", new { @class = "form-control", @placeholder = "E-mail", @id = "Email" })
+                        </div>
+                        <div>
+                            @Html.Password("Password", "", new { @class = "form-control", @placeholder = "Senha", @id = "Password" })
+                        </div>
+                        <div>
+                            <input type="submit" value="Entrar" class="btn btn-default" />
+                            <a class="reset_pass" href="#" id="esqueceuSenha">Esqueceu sua senha?</a>
+                        </div>
+
+                    }
+                    <div class="clearfix"></div>
+                    <div class="separator">
+                        <label for="err" class="text-danger" id="avisoRecuperaSenha">@ViewBag.erro</label>
+                        <div class="row" id="email" hidden="hidden">
+                            <label for="err" class="text-danger" id="avisoRecuperaSenha">Para recuperar sua senha, coloque seu login no campo Usuário e aperte o botão abaixo.</label>
+                            <input type="button" value="Recupere sua Senha" class="btn btn-default" id="recuperaSenha" />
+                        </div>
+                        <div class="clearfix"></div>
+                        <br />
+                        <div>
+                            <p>
+                                ©@DateTime.Now.Year Todos os direitos reservados.
+                            </p>
+
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+
+    $("#createUser").click(function () {
+       window.location.href = "/User/Create";
+    });
+
+</script>
