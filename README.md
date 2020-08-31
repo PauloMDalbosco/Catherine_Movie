@@ -15,7 +15,7 @@
 
 - Nunca utilizei testes unitários de forma profissional, e como meu tempo era muito curto, deixei por último, porém não deu tempo de estudar e fazer algo legal como eu queria.
 
-- Eu sei que 7 dias são necessários para fazer algo bem bacana, mas meu tempo real era apenas no domingo, espero que tenha feito algo que lhes possa avaliar o meu conhecimneto. Na persistência de filmes alugados em Locação, minh aintenção era criar um objeto em JavaScript da tabela e enviar um json para o C# tipar uma classe, porém ontem quando eu estava fazendo isso começou a dar um erro de parse e para não deixar de entregar hoje, fiz uma gambiarra para poder prosseguir, não seria o ideal a se fazer em projeto em produção.
+- Eu sei que 7 dias são necessários para fazer algo bem bacana, mas meu tempo real era apenas no domingo, e já faziam quase 3 anos que não trabalhava mais com Web, hoj em dia trabalho mais com WPF, UWP e Xamarin, espero que tenha feito algo que lhes possa avaliar o meu conhecimneto. Na persistência de filmes alugados em Locação, minh aintenção era criar um objeto em JavaScript da tabela e enviar um json para o C# tipar uma classe, porém ontem quando eu estava fazendo isso começou a dar um erro de parse e para não deixar de entregar hoje, fiz uma gambiarra para poder prosseguir, não seria o ideal a se fazer em projeto em produção.
 
 - Iria criar uma camada apenas para Regras de Negócio, como costumo fazer, porém o tempo era curto e como o requisito era usar o Entity com Code First, aproveite e usei as Data Annotations.
 
